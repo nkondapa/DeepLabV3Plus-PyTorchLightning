@@ -1,1 +1,1 @@
-python train_deeplabv3plus.py --eval+dataset pascal --max_epochs 46 --batch_size 16
+python train_deeplabv3plus.py --eval_dataset pascal --max_epochs 46 --batch_size 16
