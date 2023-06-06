@@ -37,7 +37,7 @@ class DeeplabV3Plus(SegmentationModel):
         )
         scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=[
             lambda x: (1 - x / (self.max_epochs * self.dataloader_length + 1)) ** cfg.TRAIN_POWER,
-            lambda x: 10 * (1 - x / (self.max_epochs * self.dataloader_length + 1)) ** cfg.TRAIN_POWER
+            lambda x: (1 - x / (self.max_epochs * self.dataloader_length + 1)) ** cfg.TRAIN_POWER
         ])
         return [optimizer], [{"scheduler": scheduler, "interval": "step"}]
 
