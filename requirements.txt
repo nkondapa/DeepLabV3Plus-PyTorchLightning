@@ -18,3 +18,5 @@ kornia
 openai
 opencv-python
 invisible-watermark
+pandas
+scikit-image
