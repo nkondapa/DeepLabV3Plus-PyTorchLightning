@@ -231,9 +231,9 @@ def main():
 if __name__ == "__main__":
     import sys
 
-    filter_ops = ["mean_filter", "keep_only_target_classes"]
-    args = [
-        '--debug', '--eval_dataset', 'pascal', #, 'coco', '--coco_random_subset', '0.1',
-    ]
-    sys.argv.extend(args)
+    # filter_ops = ["mean_filter", "keep_only_target_classes"]
+    # args = [
+    #     '--debug', '--eval_dataset', 'pascal', #, 'coco', '--coco_random_subset', '0.1',
+    # ]
+    # sys.argv.extend(args)
     main()
