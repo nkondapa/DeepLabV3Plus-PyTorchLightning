@@ -9,7 +9,7 @@ import lightning.pytorch as pl
 import segmentation_models_pytorch as smp
 
 from misc.visualizer import make_axes_invisible, SegmentationMapVisualizer
-
+import pdb
 
 class SegmentationModel(pl.LightningModule, ABC):
 
@@ -196,7 +196,9 @@ class SegmentationModel(pl.LightningModule, ABC):
         [make_axes_invisible(ax) for ax in axes.flatten()]
         try:
             self.logger.experiment.log({f"{phase}_predictions": fig})
-        except:
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
+        except Exception as e:
             print("Logger cannot save image. Displaying instead.")
             plt.show()
         plt.close()
