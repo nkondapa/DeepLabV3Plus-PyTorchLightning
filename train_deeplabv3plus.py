@@ -60,6 +60,7 @@ def main():
     parser.add_argument("--num_workers", type=int, default=8)
     parser.add_argument("--log_freq", type=int, default=100)
     parser.add_argument("--log_every_n_steps", type=int, default=1)
+    parser.add_argument("--val_every_n_epochs", type=int, default=1)
     parser.add_argument("--wandb_group", type=str, default="FT_baseline_runs")
     parser.add_argument("--debug", action='store_true', default=False)
     parser.add_argument("--wandb_debug", action='store_true', default=False)
@@ -211,7 +212,8 @@ def main():
         callbacks=callbacks,
         limit_train_batches=limit_train_batches, # None unless --wandb_debug flag is set
         limit_val_batches=limit_val_batches, # None unless --wandb_debug flag is set
-        plugins=[TorchSyncBatchNorm()]
+        check_val_every_n_epoch=args.val_every_n_epochs, # None unless --wandb_debug flag is set
+        sync_batchnorm=True if args.num_gpus > 1 else False,
     )
     if trainer.global_rank == 0:
         logger.experiment.config.update(args)
