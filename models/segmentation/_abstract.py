@@ -69,8 +69,8 @@ class SegmentationModel(pl.LightningModule, ABC):
         return None  # override this
 
     def forward(self, x):
-        if self.normalize_images:
-            x = T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])(x)
+        # if self.normalize_images:
+        #     x = T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])(x)
         out = self.model(x)
         if isinstance(out, dict):
             out = out["out"]

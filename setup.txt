@@ -16,3 +16,7 @@ scp -P 40519 /home/nkondapa/PycharmProjects/DeepLabV3PlusPL/data/SegmentationCla
 unzip SegmentationClassAug.zip
 rm -rf ~/DeeplabV3PlusPL/data/VOCdevkit/VOC2012/SegmentationClass
 mv SegmentationClassAug /root/DeeplabV3PlusPL/data/VOCdevkit/VOC2012/SegmentationClass
+
+mv trainaug.txt /root/DeeplabV3PlusPL/data/VOCdevkit/VOC2012/ImageSets/Segmentation/
+
+scp -r -P 40519 root@76.65.73.110:/root/DeeplabV3PlusPL/checkpoints /home/nkondapa/PycharmProjects/DeeplabV3PlusPL/stage

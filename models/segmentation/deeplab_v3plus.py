@@ -16,7 +16,7 @@ class DeeplabV3Plus(SegmentationModel):
         self.dataloader_length = dataloader_length
         # self.loss_mode = kwargs.get("loss_mode", "multiclass")
 
-        super().__init__(**kwargs)
+        super().__init__(**kwargs, normalize_images=False)
 
     def initialize_model(self):
         model = dlv3p(cfg)
@@ -36,8 +36,8 @@ class DeeplabV3Plus(SegmentationModel):
             momentum=cfg.TRAIN_MOMENTUM
         )
         scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=[
-            lambda x: (1 - x / ((self.max_epochs * self.dataloader_length) ** 0.9)),
-            lambda x: 10 * (1 - x / ((self.max_epochs * self.dataloader_length) ** cfg.TRAIN_POWER))
+            lambda x: (1 - x / (self.max_epochs * self.dataloader_length + 1)) ** 0.9,
+            lambda x: 10 * (1 - x / (self.max_epochs * self.dataloader_length + 1)) ** cfg.TRAIN_POWER
         ])
         return [optimizer], [scheduler]
 
