@@ -1,8 +1,7 @@
-sudo apt-get update && apt-get install ffmpeg libsm6 libxext6 unar vim htop -y gcc
+sudo apt-get update && apt-get install ffmpeg libsm6 libxext6 unar vim htop -y gcc zip unzip
 git clone https://github.com/nkondapa/DeeplabV3PlusPL.git
 cd DeeplabV3PlusPL
 mkdir data
-sudo apt-get install zip unzip
 cd ..
 pip install virtualenv
 virtualenv venv
