@@ -1,1 +1,1 @@
-python train_deeplabv3plus.py --eval_dataset pascal --max_epochs 46 --batch_size 16 --num_gpus 2 --val_every_n_epochs 5 --wandb_group deeplabv3plus_training
+python train_deeplabv3plus.py --eval_dataset pascal --max_epochs 46 --batch_size 16 --num_gpus 2 --val_every_n_epochs 3 --wandb_group deeplabv3plus_training
