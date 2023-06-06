@@ -1,0 +1,14 @@
+git clone https://github.com/nkondapa/DeeplabV3PlusPL.git
+cd DeeplabV3PlusPL
+mkdir data
+sudo apt-get install zip unzip
+cd ..
+pip install -r requirements.txt
+
+ssh -p 40519 root@76.65.73.110 -L 8080:localhost:8080
+scp -P 40519 /media/nkondapa/storage2/VOCtrainval_11-May-2012.tar root@76.65.73.110:/root/DeeplabV3PlusPL/data/
+tar -xvf VOCtrainval_11-May-2012.tar
+scp -P 40519 /home/nkondapa/PycharmProjects/DeepLabV3PlusPL/data/SegmentationClassAug.zip root@76.65.73.110:/root/DeeplabV3PlusPL/data/
+unzip SegmentationClassAug.zip
+rm -rf ~/DeeplabV3PlusPL/data/VOCdevkit/VOC2012/SegmentationClass
+mv SegmentationClassAug /root/DeeplabV3PlusPL/data/VOCdevkit/VOC2012/SegmentationClass
