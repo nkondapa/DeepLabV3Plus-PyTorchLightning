@@ -69,6 +69,7 @@ def main():
     parser.add_argument("--from_scratch", action='store_true', default=False)
     parser.add_argument("--max_epochs", type=int, default=80)
     parser.add_argument("--batch_size", type=int, default=16)
+    parser.add_argument("--num_gpus", type=int, default=1)
     parser.add_argument("--val_batch_size", type=int, default=16)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--lr", type=float)
@@ -201,7 +202,9 @@ def main():
     logger.watch(model, log="all", log_freq=log_freq)
 
     trainer = pl.Trainer(
-        accelerator="cuda",
+        accelerator="gpu",
+        devices=args.num_gpus,
+        strategy="ddp",
         logger=logger,
         max_epochs=max_epochs,
         log_every_n_steps=log_every_n_steps,
