@@ -197,7 +197,7 @@ def main():
         log_model="all",
         entity="vision-lab",
     )
-    logger.experiment.config.update(args)
+
     # watch model
     logger.watch(model, log="all", log_freq=log_freq)
 
@@ -213,6 +213,8 @@ def main():
         limit_val_batches=limit_val_batches, # None unless --wandb_debug flag is set
         plugins=[TorchSyncBatchNorm()]
     )
+    if trainer.global_rank == 0:
+        logger.experiment.config.update(args)
 
     if not args.debug:
         trainer.validate(model, dataloaders=val_loaders)
@@ -229,7 +231,7 @@ if __name__ == "__main__":
 
     # filter_ops = ["mean_filter", "keep_only_target_classes"]
     # args = [
-    #     '--debug', '--eval_dataset', 'pascal', #, 'coco', '--coco_random_subset', '0.1',
+    #     '--wandb_debug', '--eval_dataset', 'pascal', #, 'coco', '--coco_random_subset', '0.1',
     # ]
     # sys.argv.extend(args)
     main()
