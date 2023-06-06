@@ -30,7 +30,8 @@ MODELS = {
 def collect_model_kwargs(args, train_loader):
     kwargs = {}
     kwargs['max_epochs'] = args.max_epochs
-    kwargs['dataloader_length'] = len(train_loader)
+    kwargs['dataloader_length'] = len(train_loader) / args.num_gpus
+    print('dataloader_length: ', kwargs['dataloader_length'])
     return kwargs
 
 def prep_include_classes(args):
