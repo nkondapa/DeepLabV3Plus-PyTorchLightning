@@ -25,7 +25,8 @@ class VOCDataset(Dataset):
     visualizer_kwargs = dict(palette="voc", fill_val="white")
     classes = classes
 
-    def __init__(self, dataset_name, cfg, period, aug):
+    def __init__(self, dataset_name, cfg, period, aug, run_test=False):
+        self.run_test = run_test
         self.dataset_name = dataset_name
         self.root_dir = os.path.join(cfg.ROOT_DIR, 'data', 'VOCdevkit')
         self.dataset_dir = os.path.join(self.root_dir, dataset_name)
@@ -156,7 +157,8 @@ class VOCDataset(Dataset):
             sample['segmentation'] = segmentation
             if self.cfg.DATA_RESCALE > 0:
                 sample = self.rescale(sample)
-            # sample = self.multiscale(sample)
+            if self.run_test:
+                sample = self.multiscale(sample)
 
         # print('Post', sample['segmentation'].max())
 
@@ -167,7 +169,10 @@ class VOCDataset(Dataset):
             sample['segmentation_onehot'] = onehot(t, self.cfg.MODEL_NUM_CLASSES)
         sample = self.totensor(sample)
 
-        return sample['image'], sample['segmentation']
+        if self.run_test:
+            return sample
+        else:
+            return sample['image'], sample['segmentation']
 
     def __colormap(self, N):
         """Get the map from label index to color
