@@ -39,7 +39,7 @@ class DeeplabV3Plus(SegmentationModel):
             lambda x: (1 - x / (self.max_epochs * self.dataloader_length + 1)) ** cfg.TRAIN_POWER,
             lambda x: 10 * (1 - x / (self.max_epochs * self.dataloader_length + 1)) ** cfg.TRAIN_POWER
         ])
-        return [optimizer], [scheduler]
+        return [optimizer], [{"scheduler": scheduler, "interval": "epoch"}]
 
     def get_params(self, model, key):
         for m in model.named_modules():
