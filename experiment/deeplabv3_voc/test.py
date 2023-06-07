@@ -65,7 +65,7 @@ def test_net():
     print('start loading model %s' % cfg.TEST_CKPT)
     model_dict = torch.load(cfg.TEST_CKPT, map_location=device)
     state_dict = model_dict['state_dict']
-    net.load_state_dict(model_dict)
+    net.load_state_dict(state_dict)
 
     net.eval()
     result_list = []

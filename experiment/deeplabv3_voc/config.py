@@ -57,7 +57,8 @@ class Configuration():
 
 		self.TEST_MULTISCALE = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75]
 		self.TEST_FLIP = True
-		self.TEST_CKPT = os.path.join(self.ROOT_DIR,'stage/checkpoints/None/model_checkpoint_None.ckpt')
+		# self.TEST_CKPT = os.path.join(self.ROOT_DIR,'stage/checkpoints/deeplabv3plus100and200epoch/model_checkpoint_None-v1.ckpt')
+		self.TEST_CKPT = os.path.join(self.ROOT_DIR,'stage/checkpoints/deeplabv3plus100and200epoch/last-v1.ckpt')
 		self.TEST_GPUS = 1
 		self.TEST_BATCHES = 16		
 
