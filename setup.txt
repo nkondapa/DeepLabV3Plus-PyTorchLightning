@@ -1,22 +1,21 @@
-sudo apt-get update && apt-get install ffmpeg libsm6 libxext6 unar vim htop -y gcc
+sudo apt-get update && apt-get install ffmpeg libsm6 libxext6 unar vim htop -y gcc zip unzip
 git clone https://github.com/nkondapa/DeeplabV3PlusPL.git
 cd DeeplabV3PlusPL
 mkdir data
-sudo apt-get install zip unzip
-cd ..
 pip install virtualenv
 virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-ssh -p 40501 root@76.65.73.110 -L 8080:localhost:8080
-scp -P 40501 /media/nkondapa/storage2/VOCtrainval_11-May-2012.tar root@76.65.73.110:/root/DeeplabV3PlusPL/data/
+ssh -p 20677 root@198.166.137.3 -L 8080:localhost:8080
+scp -P 20677 /media/nkondapa/storage2/VOCtrainval_11-May-2012.tar root@198.166.137.3:/root/DeeplabV3PlusPL/data/
 tar -xvf VOCtrainval_11-May-2012.tar
-scp -P 40501 /home/nkondapa/PycharmProjects/DeeplabV3PlusPL/data/SegmentationClassAug.zip root@76.65.73.110:/root/DeeplabV3PlusPL/data/
+scp -P 20677 /home/nkondapa/PycharmProjects/DeeplabV3PlusPL/data/SegmentationClassAug.zip root@198.166.137.3:/root/DeeplabV3PlusPL/data/
 unzip SegmentationClassAug.zip
 rm -rf ~/DeeplabV3PlusPL/data/VOCdevkit/VOC2012/SegmentationClass
 mv SegmentationClassAug /root/DeeplabV3PlusPL/data/VOCdevkit/VOC2012/SegmentationClass
 
 mv trainaug.txt /root/DeeplabV3PlusPL/data/VOCdevkit/VOC2012/ImageSets/Segmentation/
 
-scp -r -P 40501 root@76.65.73.110:/root/DeeplabV3PlusPL/checkpoints /home/nkondapa/PycharmProjects/DeeplabV3PlusPL/stage
+scp -r -P 20677 root@198.166.137.3:/root/DeeplabV3PlusPL/checkpoints /home/nkondapa/PycharmProjects/DeeplabV3PlusPL/stage
+scp -r -P 20677 root@198.166.137.3:/root/DeeplabV3PlusPL/wandb /home/nkondapa/PycharmProjects/DeeplabV3PlusPL/stage

@@ -19,7 +19,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
 from torch.nn import init
-# from net.sync_batchnorm import SynchronizedBatchNorm2d
 
 bn_mom = 0.0003
 __all__ = ['xception']
@@ -34,11 +33,9 @@ class SeparableConv2d(nn.Module):
         self.relu0 = nn.ReLU(inplace=inplace)
         self.depthwise = nn.Conv2d(in_channels,in_channels,kernel_size,stride,padding,dilation,groups=in_channels,bias=bias)
         self.bn1 = nn.BatchNorm2d(in_channels, momentum=bn_mom)
-        # self.bn1 = SynchronizedBatchNorm2d(in_channels, momentum=bn_mom)
         self.relu1 = nn.ReLU(inplace=True)
         self.pointwise = nn.Conv2d(in_channels,out_channels,1,1,0,1,1,bias=bias)
         self.bn2 = nn.BatchNorm2d(out_channels, momentum=bn_mom)
-        # self.bn2 = SynchronizedBatchNorm2d(out_channels, momentum=bn_mom)
         self.relu2 = nn.ReLU(inplace=True)
         self.activate_first = activate_first
     def forward(self,x):
@@ -68,7 +65,6 @@ class Block(nn.Module):
         if out_filters != in_filters or strides!=1:
             self.skip = nn.Conv2d(in_filters,out_filters,1,stride=strides, bias=False)
             self.skipbn = nn.BatchNorm2d(out_filters, momentum=bn_mom)
-            # self.skipbn = SynchronizedBatchNorm2d(out_filters, momentum=bn_mom)
             self.head_relu = False
         else:
             self.skip=None
@@ -120,12 +116,10 @@ class Xception(nn.Module):
             raise ValueError('xception.py: output stride=%d is not supported.'%os) 
         self.conv1 = nn.Conv2d(3, 32, 3, 2, 1, bias=False)
         self.bn1 = nn.BatchNorm2d(32, momentum=bn_mom)
-        # self.bn1 = SynchronizedBatchNorm2d(32, momentum=bn_mom)
         self.relu = nn.ReLU(inplace=True)
         
         self.conv2 = nn.Conv2d(32,64,3,1,1,bias=False)
         self.bn2 = nn.BatchNorm2d(64, momentum=bn_mom)
-        # self.bn2 = SynchronizedBatchNorm2d(64, momentum=bn_mom)
         #do relu here
 
         self.block1=Block(64,128,2)
@@ -157,14 +151,11 @@ class Xception(nn.Module):
         #self.block12=Block(728,1024,2,2,start_with_relu=True,grow_first=False)
 
         self.conv3 = SeparableConv2d(1024,1536,3,1,1*rate,dilation=rate,activate_first=False)
-        # self.bn3 = SynchronizedBatchNorm2d(1536, momentum=bn_mom)
 
         self.conv4 = SeparableConv2d(1536,1536,3,1,1*rate,dilation=rate,activate_first=False)
-        # self.bn4 = SynchronizedBatchNorm2d(1536, momentum=bn_mom)
 
         #do relu here
         self.conv5 = SeparableConv2d(1536,2048,3,1,1*rate,dilation=rate,activate_first=False)
-        # self.bn5 = SynchronizedBatchNorm2d(2048, momentum=bn_mom)
         self.layers = []
 
         #------- init weights --------
@@ -173,7 +164,6 @@ class Xception(nn.Module):
                 n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
                 m.weight.data.normal_(0, math.sqrt(2. / n))
             elif isinstance(m, nn.BatchNorm2d):
-            # elif isinstance(m, SynchronizedBatchNorm2d):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
         #-----------------------------

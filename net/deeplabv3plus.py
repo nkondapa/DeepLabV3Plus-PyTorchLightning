@@ -6,7 +6,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-# from net.sync_batchnorm import SynchronizedBatchNorm2d
 from torch.nn import init
 from net.backbone import build_backbone
 from net.ASPP import ASPP
@@ -32,19 +31,16 @@ class deeplabv3plus(nn.Module):
             nn.Conv2d(indim, cfg.MODEL_SHORTCUT_DIM, cfg.MODEL_SHORTCUT_KERNEL, 1,
                       padding=cfg.MODEL_SHORTCUT_KERNEL // 2, bias=True),
             torch.nn.BatchNorm2d(cfg.MODEL_SHORTCUT_DIM, momentum=cfg.TRAIN_BN_MOM),
-            # SynchronizedBatchNorm2d(cfg.MODEL_SHORTCUT_DIM, momentum=cfg.TRAIN_BN_MOM),
             nn.ReLU(inplace=True),
         )
         self.cat_conv = nn.Sequential(
             nn.Conv2d(cfg.MODEL_ASPP_OUTDIM + cfg.MODEL_SHORTCUT_DIM, cfg.MODEL_ASPP_OUTDIM, 3, 1, padding=1,
                       bias=True),
             torch.nn.BatchNorm2d(cfg.MODEL_ASPP_OUTDIM, momentum=cfg.TRAIN_BN_MOM),
-            # SynchronizedBatchNorm2d(cfg.MODEL_ASPP_OUTDIM, momentum=cfg.TRAIN_BN_MOM),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
             nn.Conv2d(cfg.MODEL_ASPP_OUTDIM, cfg.MODEL_ASPP_OUTDIM, 3, 1, padding=1, bias=True),
             torch.nn.BatchNorm2d(cfg.MODEL_ASPP_OUTDIM, momentum=cfg.TRAIN_BN_MOM),
-            # SynchronizedBatchNorm2d(cfg.MODEL_ASPP_OUTDIM, momentum=cfg.TRAIN_BN_MOM),
             nn.ReLU(inplace=True),
             nn.Dropout(0.1),
         )
@@ -52,9 +48,6 @@ class deeplabv3plus(nn.Module):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            # elif isinstance(m, SynchronizedBatchNorm2d):
-            # 	nn.init.constant_(m.weight, 1)
-            # 	nn.init.constant_(m.bias, 0)
             elif isinstance(m, torch.nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
