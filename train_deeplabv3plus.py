@@ -34,6 +34,7 @@ def collect_model_kwargs(args, train_loader):
     print('dataloader_length: ', kwargs['dataloader_length'])
     return kwargs
 
+
 def prep_include_classes(args):
     # use default if no val classes are specified
     if args.include_classes_train is None:
@@ -54,6 +55,7 @@ def prep_include_classes(args):
         include_classes_val = 'all'
 
     return include_classes_train, include_classes_val
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -211,9 +213,9 @@ def main():
         max_epochs=max_epochs,
         log_every_n_steps=log_every_n_steps,
         callbacks=callbacks,
-        limit_train_batches=limit_train_batches, # None unless --wandb_debug flag is set
-        limit_val_batches=limit_val_batches, # None unless --wandb_debug flag is set
-        check_val_every_n_epoch=args.val_every_n_epochs, # None unless --wandb_debug flag is set
+        limit_train_batches=limit_train_batches,  # None unless --wandb_debug flag is set
+        limit_val_batches=limit_val_batches,  # None unless --wandb_debug flag is set
+        check_val_every_n_epoch=args.val_every_n_epochs,  # None unless --wandb_debug flag is set
         sync_batchnorm=True if args.num_gpus > 1 else False,
     )
     if trainer.global_rank == 0:

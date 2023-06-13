@@ -14,7 +14,6 @@ from config import cfg
 from datasets.VOCDataset import VOCDataset
 from net.generateNet import generate_net
 import torch.optim as optim
-from net.sync_batchnorm.replicate import patch_replication_callback
 
 from torch.utils.data import DataLoader
 from models.segmentation.unet import UNetResnet18
@@ -36,7 +35,7 @@ def test_net():
     dataloader = DataLoader(dataset,
                             batch_size=cfg.TEST_BATCHES,
                             shuffle=False,
-                            num_workers=cfg.DATA_WORKERS)
+                            num_workers=4)
 
     model_name = 'DeeplabV3Plus'
     model_kwargs = {}
