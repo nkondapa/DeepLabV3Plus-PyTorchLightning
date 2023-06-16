@@ -14,10 +14,10 @@ from torch.utils.data import ConcatDataset
 from datasets.VOCDataset import VOCDataset
 from models.segmentation.unet import UNetResnet18
 from models.segmentation.deeplab_v3 import DeeplabV3Resnet50, DeeplabV3Resnet101
-from models.segmentation.deeplab_v3plus import DeeplabV3Plus
+from models.segmentation.deeplab_v3plus_ft import DeeplabV3Plus
 import numpy as np
 import datetime
-from experiment.deeplabv3_voc.config import cfg
+from experiment.deeplabv3_vocfinetuning.config import cfg
 
 MODELS = {
     "UNetResnet18": UNetResnet18,
@@ -76,7 +76,9 @@ def main():
     parser.add_argument("--num_gpus", type=int, default=1)
     parser.add_argument("--val_batch_size", type=int, default=16)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--lr", type=float)
+    parser.add_argument("--lr", type=float, default=0.0007)
+    parser.add_argument("--train_power", type=float, default=0.9)
+    parser.add_argument("--train_momentum", type=float, default=0.9)
     parser.add_argument("--weight_decay", type=float)
     parser.add_argument("--checkpoint", type=str, default=None)
     parser.add_argument("--use_synthetic", action='store_true', default=False)

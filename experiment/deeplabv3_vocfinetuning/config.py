@@ -10,7 +10,11 @@ import time
 
 class Configuration():
 	def __init__(self):
-		self.ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname("__file__"),'..','..'))
+		# TODO come up with more elegant way to do this
+		if 'nkondapa' in os.uname().nodename:
+			self.ROOT_DIR = '/home/nkondapa/PycharmProjects/DeeplabV3PlusPL' # os.path.abspath(os.path.join(os.path.dirname("__file__")))
+		else:
+			self.ROOT_DIR = '/root/DeeplabV3PlusPL' # os.path.abspath(os.path.join(os.path.dirname("__file__")))
 		self.EXP_NAME = 'deeplabv3+vocfinetuning'
 
 		self.DATA_NAME = 'VOC2012'
@@ -38,23 +42,24 @@ class Configuration():
 		self.TRAIN_LR_GAMMA = 0.1
 		self.TRAIN_MOMENTUM = 0.9
 		self.TRAIN_WEIGHT_DECAY = 0.00004
+		self.TRAIN_BN_MOM = 0.0003 # Not here originally
 		self.TRAIN_POWER = 0.9
 		self.TRAIN_GPUS = 4
 		self.TRAIN_BATCHES = 16
 		self.TRAIN_SHUFFLE = True
 		self.TRAIN_MINEPOCH = 0	
-		self.TRAIN_EPOCHS = 60
+		self.TRAIN_EPOCHS = 46
 		self.TRAIN_LOSS_LAMBDA = 0
 		self.TRAIN_TBLOG = True
-		self.TRAIN_CKPT = os.path.join(self.ROOT_DIR,'model/deeplabv3+voc/deeplabv3plus_res101_atrous_VOC2012_epoch46_all.pth')
+		self.TRAIN_CKPT = os.path.join(self.ROOT_DIR,'model/deeplabv3+voc/model_checkpoint_deeplabv3plus_bs8_epch92.ckpt')
 
 		self.LOG_DIR = os.path.join(self.ROOT_DIR,'log',self.EXP_NAME)
 
-		self.TEST_MULTISCALE = [1.0]#[0.5, 0.75, 1.0, 1.25, 1.5, 1.75]
-		self.TEST_FLIP = False#True
-		self.TEST_CKPT = os.path.join(self.ROOT_DIR,'model/deeplabv3+vocfinetuning/deeplabv3plus_res101_atrous_VOC2012_epoch60_all.pth')
-		self.TEST_GPUS = 4
-		self.TEST_BATCHES = 16	
+		self.TEST_MULTISCALE = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75]
+		self.TEST_FLIP = True
+		self.TEST_CKPT = os.path.join(self.ROOT_DIR,'model/deeplabv3_vocfinetuning/deeplabv3plus_res101_atrous_VOC2012_epoch60_all.pth')
+		self.TEST_GPUS = 1
+		self.TEST_BATCHES = 16
 
 		self.__check()
 		self.__add_path(os.path.join(self.ROOT_DIR, 'lib'))
