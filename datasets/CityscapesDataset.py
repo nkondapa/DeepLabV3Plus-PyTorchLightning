@@ -13,10 +13,21 @@ from PIL import Image
 import numpy as np
 from torch.utils.data import Dataset
 from datasets.transform import *
+import torchvision.datasets
+
+classes = ['road', 'sidewalk', 'building', 'wall', 'fence', 'pole',
+           'traffic light', 'traffic sign', 'vegetation', 'terrain', 'sky',
+           'person', 'rider', 'car', 'truck', 'bus', 'train', 'motorcycle',
+           'bicycle']
 
 class CityscapesDataset(Dataset):
     ignore_index = 255
     visualizer_kwargs = dict(palette="cityscapes", fill_val="white")
+    classes = classes
+
+    class_meta = torchvision.datasets.Cityscapes.classes
+    id_to_train_id = {label.id: label.train_id for label in class_meta}
+
     def __init__(self, dataset_name, cfg, period, run_test=False):
         self.run_test = run_test
         self.dataset_name = dataset_name
@@ -118,13 +129,11 @@ class CityscapesDataset(Dataset):
         r,c,_ = image.shape
         sample = {'image': image, 'name': name, 'row': r, 'col': c}
 
+        seg_file = os.path.join(self.seg_dir, name + '_gtFine_labelIds.png')
+        segmentation = np.array(Image.open(seg_file))
+        sample['segmentation'] = segmentation
         
         if self.period == 'train':
-            seg_file = os.path.join(self.seg_dir, name + '_gtFine_labelIds.png')
-            segmentation = np.array(Image.open(seg_file))
-            segmentation[segmentation==-1] = 34
-            sample['segmentation'] = segmentation
-            
             if self.cfg.DATA_RANDOM_H>0 or self.cfg.DATA_RANDOM_S>0 or self.cfg.DATA_RANDOM_V>0:
                 sample = self.randomhsv(sample)
             if self.cfg.DATA_RANDOMFLIP > 0:
@@ -139,10 +148,6 @@ class CityscapesDataset(Dataset):
                 #sample = self.centerlize(sample)
                 sample = self.rescale(sample)
         else:
-            seg_file = os.path.join(self.seg_dir, name + '_gtFine_labelIds.png')
-            segmentation = np.array(Image.open(seg_file))
-            segmentation[segmentation==-1] = 34
-            sample['segmentation'] = segmentation
             if self.cfg.DATA_RESCALE > 0:
                 sample = self.rescale(sample)
             if self.run_test:
@@ -155,12 +160,16 @@ class CityscapesDataset(Dataset):
             sample['segmentation_onehot'] = onehot(t, self.cfg.MODEL_NUM_CLASSES)
         sample = self.totensor(sample)
 
-        if sample['segmentation'].min() < 0 or sample['segmentation'].max() >= self.cfg.MODEL_NUM_CLASSES:
-            print('DEBUG')
-            print(self.cfg.MODEL_NUM_CLASSES)
-            print(sample['segmentation'].min())
-            print(sample['segmentation'].max())
-            print(sample['segmentation'])
+        sample["segmentation"] = sample["segmentation"].apply_(self.id_to_train_id.get)
+        # TODO: originally it was 34
+        sample["segmentation"][sample["segmentation"] == -1] = 255
+
+        # if sample['segmentation'].min() < 0 or sample['segmentation'].max() >= self.cfg.MODEL_NUM_CLASSES:
+        #     print('DEBUG')
+        #     print(self.cfg.MODEL_NUM_CLASSES)
+        #     print(sample['segmentation'].min())
+        #     print(sample['segmentation'].max())
+        #     print(sample['segmentation'])
 
         if self.run_test:
             return sample

@@ -15,7 +15,7 @@ from datasets.VOCDataset import VOCDataset
 from datasets.CityscapesDataset import CityscapesDataset
 from models.segmentation.unet import UNetResnet18
 from models.segmentation.deeplab_v3 import DeeplabV3Resnet50, DeeplabV3Resnet101
-from models.segmentation.deeplab_v3plus import DeeplabV3Plus
+from models.segmentation.deeplab_v3plus_cityscapes import DeeplabV3Plus
 import numpy as np
 import datetime
 from experiment.deeplabv3_cityscapes.config import cfg
@@ -170,7 +170,7 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, drop_last=True)
 
     model_kwargs = collect_model_kwargs(args, train_loader)
-    model = MODELS[model_name](class_names=cityscapes_train_dataset.categories,
+    model = MODELS[model_name](class_names=cityscapes_train_dataset.classes,
                                ignore_index=cityscapes_train_dataset.ignore_index,
                                visualizer_kwargs=cityscapes_train_dataset.visualizer_kwargs,
                                **model_kwargs
@@ -235,11 +235,11 @@ if __name__ == "__main__":
     import sys
 
     # filter_ops = ["mean_filter", "keep_only_target_classes"]
-    args = [
-        "--eval_dataset", "cityscapes", "--max_epochs", "1", "--batch_size", "16",
-        "--num_gpus", "1", "--num_workers", "0", "--val_every_n_epochs", "1",
-        "--wandb_group", "deeplabv3plus_cityscapes", "--exp_name",
-        "deeplabv3plus_cityscapes_bs16_epoch100", "--debug"
-    ]
-    sys.argv.extend(args)
+    # args = [
+    #     "--eval_dataset", "cityscapes", "--max_epochs", "1", "--batch_size", "16",
+    #     "--num_gpus", "1", "--num_workers", "0", "--val_every_n_epochs", "1",
+    #     "--wandb_group", "deeplabv3plus_cityscapes", "--exp_name",
+    #     "deeplabv3plus_cityscapes_bs16_epoch100", "--debug"
+    # ]
+    # sys.argv.extend(args)
     main()
