@@ -1,13 +1,13 @@
-sudo apt-get update && apt-get install ffmpeg libsm6 libxext6 unar vim htop -y gcc zip unzip
-
-#git clone https://github.com/nkondapa/DeeplabV3PlusPL.git
-#cd DeeplabV3PlusPL
-mkdir data
-
-pip install virtualenv
-virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
+#sudo apt-get update && apt-get install ffmpeg libsm6 libxext6 unar vim htop -y gcc zip unzip
+#
+##git clone https://github.com/nkondapa/DeeplabV3PlusPL.git
+##cd DeeplabV3PlusPL
+#mkdir data
+#
+#pip install virtualenv
+#virtualenv venv
+#source venv/bin/activate
+#pip install -r requirements.txt
 
 wget -P data/ http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
 tar -xvf data/VOCtrainval_11-May-2012.tar -C ./data/
@@ -18,3 +18,7 @@ unzip data/SegmentationClassAug.zip "SegmentationClassAug/*" -d ./data
 mv data/SegmentationClassAug data/VOCdevkit/VOC2012/SegmentationClass
 
 mv trainaug.txt data/VOCdevkit/VOC2012/ImageSets/Segmentation/
+
+#pip install gdown
+#gdown 1x8V3cPQdDKAXP2gxUG3g2APcUXzPG4aM -O data/cityscapes.tar.gz
+#tar -xvf data/cityscapes.tar.gz -C data

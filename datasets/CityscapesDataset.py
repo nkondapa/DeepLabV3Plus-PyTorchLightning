@@ -15,7 +15,10 @@ from torch.utils.data import Dataset
 from datasets.transform import *
 
 class CityscapesDataset(Dataset):
-    def __init__(self, dataset_name, cfg, period):
+    ignore_index = 255
+    visualizer_kwargs = dict(palette="cityscapes", fill_val="white")
+    def __init__(self, dataset_name, cfg, period, run_test=False):
+        self.run_test = run_test
         self.dataset_name = dataset_name
         self.root_dir = os.path.join(cfg.ROOT_DIR,'data','cityscapes')
         self.dataset_dir = self.root_dir
@@ -136,17 +139,33 @@ class CityscapesDataset(Dataset):
                 #sample = self.centerlize(sample)
                 sample = self.rescale(sample)
         else:
-            if self.cfg.DATA_RESCALE:
+            seg_file = os.path.join(self.seg_dir, name + '_gtFine_labelIds.png')
+            segmentation = np.array(Image.open(seg_file))
+            segmentation[segmentation==-1] = 34
+            sample['segmentation'] = segmentation
+            if self.cfg.DATA_RESCALE > 0:
                 sample = self.rescale(sample)
-            sample = self.multiscale(sample)
+            if self.run_test:
+                sample = self.multiscale(sample)
+
         if 'segmentation' in sample.keys():
             sample['mask'] = sample['segmentation'] < self.cfg.MODEL_NUM_CLASSES
-            sample['segmentation'][sample['segmentation'] >= self.cfg.MODEL_NUM_CLASSES] = 0
-            sample['segmentation_onehot']=onehot(sample['segmentation'],self.cfg.MODEL_NUM_CLASSES)
+            t = sample['segmentation'].copy()
+            t[t >= self.cfg.MODEL_NUM_CLASSES] = 0
+            sample['segmentation_onehot'] = onehot(t, self.cfg.MODEL_NUM_CLASSES)
         sample = self.totensor(sample)
 
-        return sample
+        if sample['segmentation'].min() < 0 or sample['segmentation'].max() >= self.cfg.MODEL_NUM_CLASSES:
+            print('DEBUG')
+            print(self.cfg.MODEL_NUM_CLASSES)
+            print(sample['segmentation'].min())
+            print(sample['segmentation'].max())
+            print(sample['segmentation'])
 
+        if self.run_test:
+            return sample
+        else:
+            return sample['image'], sample['segmentation']
 
 
     def __colormap(self, N):
