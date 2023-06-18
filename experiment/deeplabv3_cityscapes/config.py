@@ -22,6 +22,7 @@ class Configuration():
 		self.DATA_WORKERS = 8
 		# self.DATA_RESCALE = 512
 		self.DATA_RESCALE = 769
+		self.DATA_RANDOMCROP = 512
 		self.DATA_RANDOMROTATION = 0
 		self.DATA_RANDOMSCALE = 2
 		self.DATA_RANDOM_H = 10
