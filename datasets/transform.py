@@ -205,9 +205,7 @@ class RandomScale(object):
     def __call__(self, sample):
         image, segmentation = sample['image'], sample['segmentation']
         row, col, _ = image.shape
-        #rand_scale = np.random.rand() * (self.scale_r - 1 / self.scale_r) + 1 / self.scale_r
-        #TODO: so that rescale=2 creates a scaling interval from 0.5 to 2
-        rand_scale = np.random.rand() * (self.scale_r + 1 / self.scale_r) + 1 / self.scale_r
+        rand_scale = np.random.rand() * (self.scale_r - 1 / self.scale_r) + 1 / self.scale_r
         img = cv2.resize(image, None, fx=rand_scale, fy=rand_scale, interpolation=cv2.INTER_CUBIC)
         seg = cv2.resize(segmentation, None, fx=rand_scale, fy=rand_scale, interpolation=self.seg_interpolation)
         sample['image'] = img
