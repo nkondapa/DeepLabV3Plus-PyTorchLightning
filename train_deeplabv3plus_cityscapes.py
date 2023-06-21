@@ -80,7 +80,6 @@ def main():
     parser.add_argument("--lr", type=float)
     parser.add_argument("--weight_decay", type=float)
     parser.add_argument("--checkpoint", type=str, default=None)
-    parser.add_argument("--global_step", type=int, default=0)
     parser.add_argument("--use_synthetic", action='store_true', default=False)
     parser.add_argument('--include_classes', type=str, nargs='+', default=["Horse"])
     parser.add_argument('--include_classes_train', type=str, nargs='+')
@@ -218,7 +217,6 @@ def main():
         limit_val_batches=limit_val_batches,  # None unless --wandb_debug flag is set
         check_val_every_n_epoch=args.val_every_n_epochs,  # None unless --wandb_debug flag is set
         sync_batchnorm=True if args.num_gpus > 1 else False,
-        global_step=args.global_step,
     )
     if trainer.global_rank == 0:
         logger.experiment.config.update(args)
