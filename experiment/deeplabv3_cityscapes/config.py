@@ -20,8 +20,9 @@ class Configuration():
 		self.DATA_NAME = 'cityscapes'
 		self.DATA_AUG = True
 		self.DATA_WORKERS = 8
-		self.DATA_RESCALE = 512
-		self.DATA_RANDOMCROP = 512
+		self.DATA_RESCALE = 768
+		self.DATA_CENTERLIZE = 1024
+		self.DATA_RANDOMCROP = 768
 		self.DATA_RANDOMROTATION = 0
 		self.DATA_RANDOMSCALE = 2
 		self.DATA_RANDOM_H = 10
