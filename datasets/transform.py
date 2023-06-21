@@ -93,6 +93,27 @@ class Centerlize(object):
         return sample
 
 
+class CenterCrop(object):
+    """Crop the image as a square in the center in a sample."""
+
+    def __call__(self, sample):
+        image, segmentation = sample['image'], sample['segmentation']
+
+        h, w = image.shape[:2]
+        new_h, new_w = min(h, w), min(h, w)
+
+        top = (h - new_h) // 2
+        left = (w - new_h) // 2
+
+        image = image[top: top + new_h,
+                left: left + new_w]
+
+        segmentation = segmentation[top: top + new_h,
+                       left: left + new_w]
+        sample['image'] = image
+        sample['segmentation'] = segmentation
+        return sample
+
 class RandomCrop(object):
     """Crop randomly the image in a sample.
 

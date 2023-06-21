@@ -101,7 +101,7 @@ class CityscapesDataset(Dataset):
 
         if cfg.DATA_RESCALE:
             self.rescale = Rescale(cfg.DATA_RESCALE,fix=False)
-            self.centerlize = Centerlize(cfg.DATA_CENTERLIZE)
+            self.centercrop = CenterCrop()
         if self.period == 'train':        
             if cfg.DATA_RANDOMCROP > 0:
                 self.randomcrop = RandomCrop(cfg.DATA_RANDOMCROP)
@@ -149,7 +149,7 @@ class CityscapesDataset(Dataset):
                 sample = self.rescale(sample)
         else:
             if self.cfg.DATA_RESCALE > 0:
-                sample = self.centerlize(sample)
+                sample = self.centercrop(sample)
                 sample = self.rescale(sample)
             if self.run_test:
                 sample = self.multiscale(sample)

@@ -11,8 +11,8 @@ import time
 class Configuration():
 	def __init__(self):
 		# TODO come up with more elegant way to do this
-		if 'nkondapa' in os.uname().nodename:
-			self.ROOT_DIR = '/home/nkondapa/PycharmProjects/DeeplabV3PlusPL' # os.path.abspath(os.path.join(os.path.dirname("__file__")))
+		if 'rogerio-desktop' in os.uname().nodename:
+			self.ROOT_DIR = '/home/rogerio/PycharmProjects/DeeplabV3PlusPL' # os.path.abspath(os.path.join(os.path.dirname("__file__")))
 		else:
 			self.ROOT_DIR = '/root/DeeplabV3PlusPL' # os.path.abspath(os.path.join(os.path.dirname("__file__")))
 		self.EXP_NAME = 'deeplabv3+cityscapes'
@@ -21,7 +21,6 @@ class Configuration():
 		self.DATA_AUG = True
 		self.DATA_WORKERS = 8
 		self.DATA_RESCALE = 768
-		self.DATA_CENTERLIZE = 1023
 		self.DATA_RANDOMCROP = 768
 		self.DATA_RANDOMROTATION = 0
 		self.DATA_RANDOMSCALE = 2
