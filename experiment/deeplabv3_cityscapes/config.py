@@ -38,7 +38,7 @@ class Configuration():
 		self.MODEL_NUM_CLASSES = 19
 		self.MODEL_SAVE_DIR = os.path.join(self.ROOT_DIR, 'model', self.EXP_NAME)
 
-		self.TRAIN_LR = 0.007
+		self.TRAIN_LR = 0.003
 		self.TRAIN_LR_GAMMA = 0.1
 		self.TRAIN_MOMENTUM = 0.9
 		self.TRAIN_WEIGHT_DECAY = 0.00004
