@@ -21,7 +21,7 @@ class Configuration():
 		self.DATA_AUG = True
 		self.DATA_WORKERS = 8
 		self.DATA_RESCALE = 768
-		self.DATA_CENTERLIZE = 1024
+		self.DATA_CENTERLIZE = 1023
 		self.DATA_RANDOMCROP = 768
 		self.DATA_RANDOMROTATION = 0
 		self.DATA_RANDOMSCALE = 2
