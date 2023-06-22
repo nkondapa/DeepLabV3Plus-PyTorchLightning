@@ -144,14 +144,19 @@ def main():
     include_classes_train, include_classes_val = prep_include_classes(args)
 
     cityscapes_train_dataset = CityscapesDataset('cityscapes', cfg, 'train', aug=True)
-    train_dataset = cityscapes_train_dataset
+    cityscapes_val_dataset = CityscapesDataset('cityscapes', cfg, 'val', aug=True)
+    cityscapes_train_extra_dataset = CityscapesDataset('cityscapes', cfg, 'train_extra', aug=True)
+
+    train_dataset = torch.utils.data.ConcatDataset([cityscapes_train_dataset,
+                                                    cityscapes_val_dataset,
+                                                    cityscapes_train_extra_dataset])
 
     val_loaders = []
     for v_dset in args.eval_dataset:
 
         # TODO is return prob needed for val?
         if v_dset == 'cityscapes':
-            val_dataset = CityscapesDataset('cityscapes', cfg, 'val')
+            val_dataset = CityscapesDataset('cityscapes', cfg, 'test', aug=False)
         # elif v_dset == 'coco':
         #     val_dataset = CocoDatasetPascalClasses(split="val", resize_mode="center-crop", include_classes=include_classes_val, return_dummy_prob=return_prob)
         #     if args.coco_random_subset is not None:

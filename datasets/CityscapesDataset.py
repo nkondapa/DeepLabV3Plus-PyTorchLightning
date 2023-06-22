@@ -28,17 +28,23 @@ class CityscapesDataset(Dataset):
     class_meta = torchvision.datasets.Cityscapes.classes
     id_to_train_id = {label.id: label.train_id for label in class_meta}
 
-    def __init__(self, dataset_name, cfg, period, run_test=False):
+    def __init__(self, dataset_name, cfg, period, run_test=False, aug=False):
         self.run_test = run_test
+        self.aug = aug
         self.dataset_name = dataset_name
         self.root_dir = os.path.join(cfg.ROOT_DIR,'data','cityscapes')
         self.dataset_dir = self.root_dir
         self.rst_dir = os.path.join(self.root_dir,'results',dataset_name,'Segmentation')
         self.eval_dir = os.path.join(self.root_dir,'eval_result',dataset_name,'Segmentation')
         self.period = period
-        self.img_dir = os.path.join(self.dataset_dir, 'leftImg8bit',period)
-        self.ann_dir = os.path.join(self.dataset_dir, 'gtFine',period)
-        self.seg_dir = os.path.join(self.dataset_dir, 'gtFine',period)
+        self.img_dir = os.path.join(self.dataset_dir, 'leftImg8bit', period)
+
+        if period == 'train_extra':
+            self.ann_dir = os.path.join(self.dataset_dir, 'gtCoarse', period)
+            self.seg_dir = os.path.join(self.dataset_dir, 'gtCoarse', period)
+        else:
+            self.ann_dir = os.path.join(self.dataset_dir, 'gtFine',period)
+            self.seg_dir = os.path.join(self.dataset_dir, 'gtFine',period)
         
         searchFine = os.path.join(self.img_dir,'*', '*_*_*_leftImg8bit.png' )
         filesFine = glob.glob( searchFine )
@@ -102,7 +108,7 @@ class CityscapesDataset(Dataset):
         if cfg.DATA_RESCALE:
             self.rescale = Rescale(cfg.DATA_RESCALE,fix=False)
             self.centercrop = CenterCrop()
-        if self.period == 'train':        
+        if self.aug:
             if cfg.DATA_RANDOMCROP > 0:
                 self.randomcrop = RandomCrop(cfg.DATA_RANDOMCROP)
             if cfg.DATA_RANDOMROTATION > 0:
@@ -113,7 +119,7 @@ class CityscapesDataset(Dataset):
                 self.randomflip = RandomFlip(cfg.DATA_RANDOMFLIP)
             if cfg.DATA_RANDOM_H > 0 or cfg.DATA_RANDOM_S > 0 or cfg.DATA_RANDOM_V > 0:
                 self.randomhsv = RandomHSV(cfg.DATA_RANDOM_H, cfg.DATA_RANDOM_S, cfg.DATA_RANDOM_V)        
-        else:
+        if self.run_test:
             self.multiscale = Multiscale(self.cfg.TEST_MULTISCALE)
         
 
@@ -133,7 +139,7 @@ class CityscapesDataset(Dataset):
         segmentation = np.array(Image.open(seg_file))
         sample['segmentation'] = segmentation
         
-        if self.period == 'train':
+        if self.aug:
             if self.cfg.DATA_RANDOM_H>0 or self.cfg.DATA_RANDOM_S>0 or self.cfg.DATA_RANDOM_V>0:
                 sample = self.randomhsv(sample)
             if self.cfg.DATA_RANDOMFLIP > 0:
@@ -147,12 +153,13 @@ class CityscapesDataset(Dataset):
             if self.cfg.DATA_RESCALE > 0:
                 #sample = self.centerlize(sample)
                 sample = self.rescale(sample)
-        else:
-            if self.cfg.DATA_RESCALE > 0:
-                sample = self.centercrop(sample)
-                sample = self.rescale(sample)
-            if self.run_test:
-                sample = self.multiscale(sample)
+        # else:
+        #     if self.cfg.DATA_RESCALE > 0:
+        #         sample = self.centercrop(sample)
+        #         sample = self.rescale(sample)
+
+        if self.run_test:
+            sample = self.multiscale(sample)
 
         if 'segmentation' in sample.keys():
             sample['mask'] = sample['segmentation'] < self.cfg.MODEL_NUM_CLASSES
