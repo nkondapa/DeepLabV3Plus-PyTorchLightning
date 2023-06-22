@@ -153,10 +153,10 @@ class CityscapesDataset(Dataset):
             if self.cfg.DATA_RESCALE > 0:
                 #sample = self.centerlize(sample)
                 sample = self.rescale(sample)
-        # else:
-        #     if self.cfg.DATA_RESCALE > 0:
-        #         sample = self.centercrop(sample)
-        #         sample = self.rescale(sample)
+        else:
+            if self.cfg.DATA_RESCALE > 0:
+                sample = self.centercrop(sample)
+                sample = self.rescale(sample)
 
         if self.run_test:
             sample = self.multiscale(sample)
