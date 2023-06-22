@@ -135,7 +135,10 @@ class CityscapesDataset(Dataset):
         r,c,_ = image.shape
         sample = {'image': image, 'name': name, 'row': r, 'col': c}
 
-        seg_file = os.path.join(self.seg_dir, name + '_gtFine_labelIds.png')
+        if self.period == 'train_extra':
+            seg_file = os.path.join(self.seg_dir, name + '_gtCoarse_labelIds.png')
+        else:
+            seg_file = os.path.join(self.seg_dir, name + '_gtFine_labelIds.png')
         segmentation = np.array(Image.open(seg_file))
         sample['segmentation'] = segmentation
         
