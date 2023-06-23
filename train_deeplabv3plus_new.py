@@ -132,6 +132,9 @@ def main():
     parser.add_argument("--weight_decay", type=float, default=1e-4,
                         help='weight decay (default: 1e-4)')
 
+    parser.add_argument('--train_dataset', type=str, default='cityscapes')
+    parser.add_argument('--val_dataset', type=str, nargs='+', default=['cityscapes'])
+
     args = parser.parse_args()
 
     model_name = args.model
@@ -152,10 +155,10 @@ def main():
     limit_val_batches = None
 
     if args.debug:
-        max_epochs = 4
+        max_epochs = 1
         os.environ["WANDB_MODE"] = "dryrun"
         num_workers = 0
-        batch_size = 16
+        batch_size = 8
         log_freq = 1
         save_last = False
         save_topk = 0
@@ -193,17 +196,21 @@ def main():
                         std=[0.229, 0.224, 0.225]),
     ])
 
-    cityscapes_train_dataset = Cityscapes(root=args.data_root, split='train',
-                                          transform=train_transform)
-    train_dataset = cityscapes_train_dataset
+    if args.train_dataset == 'cityscapes':
+        cityscapes_train_dataset = Cityscapes(root=args.data_root, split='train',
+                                              transform=train_transform)
+        train_dataset = cityscapes_train_dataset
+        args.num_classes = 19
+    else:
+        raise ValueError(f'Unknown train dataset {args.train_dataset}')
 
     val_loaders = []
-    for v_dset in args.eval_dataset:
+    for v_dset in args.val_dataset:
         if v_dset == 'cityscapes':
             val_dataset = Cityscapes(root=args.data_root, split='val',
                                      transform=val_transform)
         else:
-            raise ValueError(f'Unknown eval dataset {args.eval_dataset}')
+            raise ValueError(f'Unknown eval dataset {args.val_dataset}')
 
         val_loader = DataLoader(val_dataset, batch_size=val_batch_size, shuffle=False, num_workers=num_workers)
         val_loaders.append(val_loader)
@@ -276,12 +283,24 @@ def main():
 if __name__ == "__main__":
     import sys
 
-    # filter_ops = ["mean_filter", "keep_only_target_classes"]
     # args = [
-    #     "--eval_dataset", "cityscapes", "--max_epochs", "1", "--batch_size", "1",
-    #     "--num_gpus", "1", "--num_workers", "0", "--val_every_n_epochs", "1",
-    #     "--wandb_group", "deeplabv3plus_cityscapes", "--exp_name",
-    #     "deeplabv3plus_cityscapes_bs16_epoch100", "--debug"
+    #     "--train_dataset", "cityscapes",
+    #     "--val_dataset", "cityscapes",
+    #     "--max_epochs", "1",
+    #     "--batch_size", "8",
+    #     "--num_gpus", "1",
+    #     "--num_workers", "16",
+    #     "--val_every_n_epochs", "1",
+    #     "--wandb_group", "deeplabv3plus_cityscapes",
+    #     "--exp_name", "deeplabv3plus_cityscapes_bs8_epoch350",
+    #     "--backbone", "resnet101",
+    #     "--lr", "0.1",
+    #     "--crop_size", "768",
+    #     "--batch_size", "16",
+    #     "--output_stride", "16",
+    #     "--data_root", "./data/cityscapes",
+    #     "--debug"
     # ]
     # sys.argv.extend(args)
+
     main()
