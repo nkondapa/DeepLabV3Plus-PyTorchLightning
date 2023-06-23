@@ -9,6 +9,12 @@ virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
+mkdir data/cityscapes
+pip install appdirs
+python misc/downloader.py -d ./data/cityscapes gtFine_trainvaltest.zip leftImg8bit_trainvaltest.zip
+unzip data/cityscapes/gtFine_trainvaltest.zip -d ./data/cityscapes
+unzip data/cityscapes/leftImg8bit_trainvaltest.zip "leftImg8bit/*" -d ./data/cityscapes
+
 #wget -P data/ http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
 #tar -xvf data/VOCtrainval_11-May-2012.tar -C ./data/
 #
@@ -19,6 +25,6 @@ pip install -r requirements.txt
 #
 #mv trainaug.txt data/VOCdevkit/VOC2012/ImageSets/Segmentation/
 
-pip install gdown
-gdown 1x8V3cPQdDKAXP2gxUG3g2APcUXzPG4aM -O data/cityscapes.tar.gz
-tar -xvf data/cityscapes.tar.gz -C data
+#pip install gdown
+#gdown 1x8V3cPQdDKAXP2gxUG3g2APcUXzPG4aM -O data/cityscapes.tar.gz
+#tar -xvf data/cityscapes.tar.gz -C data
