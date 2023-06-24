@@ -30,7 +30,7 @@ class DeeplabV3Plus(SegmentationModel):
         self.lr = kwargs['lr']
         self.lr_policy = kwargs['lr_policy']
         self.weight_decay = kwargs['weight_decay']
-        self.total_itrs = kwargs['total_itrs']
+        self.max_steps = kwargs['max_steps']
         self.step_size = kwargs['step_size']
 
         super().__init__(**kwargs, normalize_images=False)
@@ -62,7 +62,7 @@ class DeeplabV3Plus(SegmentationModel):
             {'params': self.model.classifier.parameters(), 'lr': self.lr},
         ], lr=self.lr, momentum=0.9, weight_decay=self.weight_decay)
         if self.lr_policy == 'poly':
-            scheduler = utils.PolyLR(optimizer, self.total_itrs, power=0.9)
+            scheduler = utils.PolyLR(optimizer, self.max_steps, power=0.9)
         elif self.lr_policy == 'step':
             scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=self.step_size, gamma=0.1)
         else:

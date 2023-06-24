@@ -22,7 +22,6 @@ MODELS = {
 
 def collect_model_kwargs(args, train_loader):
     kwargs = {}
-    kwargs['max_epochs'] = args.max_epochs
     kwargs['dataloader_length'] = len(train_loader) / args.num_gpus
 
     # Model stuff
@@ -38,7 +37,7 @@ def collect_model_kwargs(args, train_loader):
     kwargs['lr'] = args.lr
     kwargs['lr_policy'] = args.lr_policy
     kwargs['weight_decay'] = args.weight_decay
-    kwargs['total_itrs'] = args.total_itrs
+    kwargs['max_steps'] = args.max_steps
     kwargs['step_size'] = args.step_size
 
     print('dataloader_length: ', kwargs['dataloader_length'])
@@ -122,8 +121,8 @@ def main():
     parser.add_argument("--loss_type", type=str, default='cross_entropy',
                         choices=['cross_entropy', 'focal_loss'], help="loss type (default: False)")
 
-    parser.add_argument("--total_itrs", type=int, default=30e3,
-                        help="epoch number (default: 30k)")
+    parser.add_argument("--max_steps", type=int, default=30e3,
+                        help="max number of learning steps (default: 30k)")
     parser.add_argument("--lr", type=float, default=0.01,
                         help="learning rate (default: 0.01)")
     parser.add_argument("--lr_policy", type=str, default='poly', choices=['poly', 'step'],
@@ -139,7 +138,7 @@ def main():
 
     model_name = args.model
     pretrained = not args.from_scratch
-    max_epochs = args.max_epochs
+    max_steps = args.max_steps
     batch_size = args.batch_size
     val_batch_size = args.val_batch_size
     num_workers = args.num_workers
@@ -155,7 +154,7 @@ def main():
     limit_val_batches = None
 
     if args.debug:
-        max_epochs = 1
+        max_steps = 100
         os.environ["WANDB_MODE"] = "dryrun"
         num_workers = 0
         batch_size = 8
@@ -259,7 +258,7 @@ def main():
         devices=args.num_gpus,
         strategy="ddp",
         logger=logger,
-        max_epochs=max_epochs,
+        max_steps=max_steps,
         log_every_n_steps=log_every_n_steps,
         callbacks=callbacks,
         limit_train_batches=limit_train_batches,  # None unless --wandb_debug flag is set

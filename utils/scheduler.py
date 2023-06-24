@@ -1,9 +1,9 @@
 from torch.optim.lr_scheduler import _LRScheduler, StepLR
 
 class PolyLR(_LRScheduler):
-    def __init__(self, optimizer, max_iters, power=0.9, last_epoch=-1, min_lr=1e-6):
+    def __init__(self, optimizer, max_steps, power=0.9, last_epoch=-1, min_lr=1e-6):
         self.power = power
-        self.max_iters = max_iters  # avoid zero lr
+        self.max_iters = max_steps  # avoid zero lr
         self.min_lr = min_lr
         super(PolyLR, self).__init__(optimizer, last_epoch)
     
