@@ -13,8 +13,7 @@ class DeeplabV3Plus(SegmentationModel):
 
     encoder_name = None
 
-    def __init__(self, max_epochs, dataloader_length, **kwargs):
-        self.max_epochs = max_epochs
+    def __init__(self, dataloader_length, **kwargs):
         self.dataloader_length = dataloader_length
 
         # Model stuff
