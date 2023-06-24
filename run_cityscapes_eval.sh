@@ -1,7 +1,7 @@
 python train_deeplabv3plus_new.py \
 --train_dataset cityscapes \
 --val_dataset cityscapes \
---max_epochs 0 \
+--max_steps 0 \
 --batch_size 16 \
 --val_batch_size 16 \
 --num_gpus 1 \
