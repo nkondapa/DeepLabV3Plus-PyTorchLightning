@@ -225,7 +225,8 @@ def main():
                                )
 
     if checkpoint is not None:
-        model.load_state_dict(torch.load(checkpoint)["state_dict"], strict=True)
+        # model.load_state_dict(torch.load(checkpoint)["state_dict"], strict=True)
+        model.load_state_dict(torch.load(checkpoint)["model_state"], strict=True)
 
     checkpoint_callbacks = []
     for i in range(len(val_loaders)):
