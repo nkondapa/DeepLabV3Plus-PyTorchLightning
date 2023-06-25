@@ -226,7 +226,7 @@ def main():
 
     if checkpoint is not None:
         # model.load_state_dict(torch.load(checkpoint)["state_dict"], strict=True)
-        checkpoint = torch.load(checkpoint, map_location=torch.device('cpu'))
+        checkpoint = torch.load(checkpoint, map_location=torch.device('cuda'))
         model.model.load_state_dict(checkpoint["model_state"])
         model.to('cuda')
 
