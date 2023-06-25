@@ -9,7 +9,7 @@ python train_deeplabv3plus_new.py \
 --wandb_group deeplabv3plus_cityscapes \
 --exp_name deeplabv3plus_new_cityscapes_bs8_steps80k_lr1e-2 \
 --backbone resnet101 \
---lr 0.01  \
+--lr 0.1  \
 --crop_size 768 \
 --output_stride 16 \
 --data_root ./data/cityscapes \
