@@ -14,4 +14,4 @@ python train_deeplabv3plus_new.py \
 --crop_size 768 \
 --output_stride 16 \
 --data_root ./data/cityscapes \
---checkpoint checkpoints/latest_deeplabv3plus_resnet101_cityscapes_os16.pth
+--checkpoint checkpoints/best_deeplabv3plus_resnet101_cityscapes_os16.pth
