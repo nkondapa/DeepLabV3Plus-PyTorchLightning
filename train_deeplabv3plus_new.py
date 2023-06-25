@@ -225,15 +225,15 @@ def main():
                                )
 
     if checkpoint is not None:
-        # model.load_state_dict(torch.load(checkpoint)["state_dict"], strict=True)
-        checkpoint = torch.load(checkpoint, map_location=torch.device('cuda'))
-        model.model.load_state_dict(checkpoint["model_state"])
-        model.to('cuda')
+        model.load_state_dict(torch.load(checkpoint)["state_dict"], strict=True)
+        # checkpoint = torch.load(checkpoint, map_location=torch.device('cuda'))
+        # model.model.load_state_dict(checkpoint["model_state"])
+        # model.to('cuda')
 
     checkpoint_callbacks = []
     for i in range(len(val_loaders)):
         checkpoint_callback = pl.callbacks.ModelCheckpoint(
-            monitor=f'val_{i}_loss',
+            monitor=f'val_{i}_mIoU',
             dirpath=f'./checkpoints/{args.exp_name}/',
             filename=f'model_checkpoint_{args.exp_name}',
             save_top_k=save_topk,  # Save top1 Why?? this is 40GB of checkpoints -->> # Save all checkpoints.
