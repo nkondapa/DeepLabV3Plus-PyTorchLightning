@@ -38,6 +38,21 @@ class DeeplabV3Plus(SegmentationModel):
 
         super().__init__(**kwargs, normalize_images=False)
 
+        for dataset_name in self.val_dataset:
+            for dataset_scale in self.val_scales:
+                if dataset_scale is None:
+                    dataset_scale = ""
+                else:
+                    dataset_scale = f"_{dataset_scale:.2f}"
+                phase = f"val_{dataset_name}" + dataset_scale
+                self.step_outputs[phase] = {
+                    "tp": [],
+                    "fp": [],
+                    "fn": [],
+                    "tn": []
+                }
+                self.visualize_flag[phase] = False
+
     def initialize_model(self):
         if self.backbone == 'resnet101':
             model = deeplabv3plus_resnet101(num_classes=self.num_classes, output_stride=self.output_stride,
