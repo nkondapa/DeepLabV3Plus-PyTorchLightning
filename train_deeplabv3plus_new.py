@@ -138,7 +138,7 @@ def main():
     parser.add_argument('--train_dataset', type=str, default='cityscapes')
     parser.add_argument('--val_dataset', type=str, nargs='+', default=['cityscapes'])
 
-    parser.add_argument('--val_scales', type=float, nargs='+', default=[None])
+    parser.add_argument('--val_scales', type=float, nargs='+', default=None)
 
     args = parser.parse_args()
 
@@ -212,22 +212,29 @@ def main():
 
     val_loaders = []
     for v_dset in args.val_dataset:
-        for scale in args.val_scales:
-            if (scale is not None) and (scale != 1):
-                scaled_val_transform = et.ExtCompose([
-                    et.ExtScale(scale=scale),
-                    val_transform,
-                ])
-            else:
-                scaled_val_transform = val_transform
-            if v_dset == 'cityscapes':
-                val_dataset = Cityscapes(root=args.data_root, split='val',
-                                         transform=scaled_val_transform)
-            else:
-                raise ValueError(f'Unknown eval dataset {args.val_dataset}')
+        if v_dset == 'cityscapes':
+            val_dataset = Cityscapes(root=args.data_root, split='val',
+                                     transform=val_transform)
+            if args.val_scales is not None:
+                scaled_val_sets = []
+                for scale in args.val_scales:
+                    scaled_val_transform = et.ExtCompose([
+                        et.ExtScale(scale=scale),
+                        val_transform,
+                    ])
+                    scaled_dataset = Cityscapes(root=args.data_root, split='val',
+                                                transform=scaled_val_transform)
+                    scaled_val_sets.append(scaled_dataset)
+                scaled_val_set = train_dataset = torch.utils.data.ConcatDataset(scaled_val_sets)
+        else:
+            raise ValueError(f'Unknown eval dataset {args.val_dataset}')
 
-            val_loader = DataLoader(val_dataset, batch_size=val_batch_size, shuffle=False, num_workers=num_workers)
-            val_loaders.append(val_loader)
+        val_loader = DataLoader(val_dataset, batch_size=val_batch_size, shuffle=False, num_workers=num_workers)
+        val_loaders.append(val_loader)
+
+        if args.val_scales is not None:
+            scaled_val_loader = DataLoader(scaled_val_set, batch_size=val_batch_size, shuffle=False, num_workers=num_workers)
+            val_loaders.append(scaled_val_loader)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers,
                               drop_last=True)
