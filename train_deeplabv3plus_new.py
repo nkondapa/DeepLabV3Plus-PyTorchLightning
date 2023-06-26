@@ -40,6 +40,10 @@ def collect_model_kwargs(args, train_loader):
     kwargs['max_steps'] = args.max_steps
     kwargs['step_size'] = args.step_size
 
+    # Multiscale validation
+    kwargs['val_scales'] = args.val_scales
+    kwargs['val_dataset'] = args.val_dataset
+
     print('dataloader_length: ', kwargs['dataloader_length'])
     return kwargs
 
@@ -134,6 +138,8 @@ def main():
     parser.add_argument('--train_dataset', type=str, default='cityscapes')
     parser.add_argument('--val_dataset', type=str, nargs='+', default=['cityscapes'])
 
+    parser.add_argument('--val_scales', type=float, nargs='+', default=[None])
+
     args = parser.parse_args()
 
     model_name = args.model
@@ -181,6 +187,7 @@ def main():
     include_classes_train, include_classes_val = prep_include_classes(args)
 
     train_transform = et.ExtCompose([
+        et.ExtRandomScale(scale_range=(0.5, 2)),
         et.ExtRandomCrop(size=(args.crop_size, args.crop_size)),
         et.ExtColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
         et.ExtRandomHorizontalFlip(),
@@ -205,14 +212,22 @@ def main():
 
     val_loaders = []
     for v_dset in args.val_dataset:
-        if v_dset == 'cityscapes':
-            val_dataset = Cityscapes(root=args.data_root, split='val',
-                                     transform=val_transform)
-        else:
-            raise ValueError(f'Unknown eval dataset {args.val_dataset}')
+        for scale in args.val_scales:
+            if (scale is not None) and (scale != 1):
+                scaled_val_transform = et.ExtCompose([
+                    et.ExtScale(scale=scale),
+                    val_transform,
+                ])
+            else:
+                scaled_val_transform = val_transform
+            if v_dset == 'cityscapes':
+                val_dataset = Cityscapes(root=args.data_root, split='val',
+                                         transform=scaled_val_transform)
+            else:
+                raise ValueError(f'Unknown eval dataset {args.val_dataset}')
 
-        val_loader = DataLoader(val_dataset, batch_size=val_batch_size, shuffle=False, num_workers=num_workers)
-        val_loaders.append(val_loader)
+            val_loader = DataLoader(val_dataset, batch_size=val_batch_size, shuffle=False, num_workers=num_workers)
+            val_loaders.append(val_loader)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers,
                               drop_last=True)
