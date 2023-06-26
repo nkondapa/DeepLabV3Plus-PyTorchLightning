@@ -40,10 +40,6 @@ def collect_model_kwargs(args, train_loader):
     kwargs['max_steps'] = args.max_steps
     kwargs['step_size'] = args.step_size
 
-    # Multiscale validation
-    kwargs['val_scales'] = args.val_scales
-    kwargs['val_dataset'] = args.val_dataset
-
     print('dataloader_length: ', kwargs['dataloader_length'])
     return kwargs
 
@@ -225,7 +221,7 @@ def main():
                     scaled_dataset = Cityscapes(root=args.data_root, split='val',
                                                 transform=scaled_val_transform)
                     scaled_val_sets.append(scaled_dataset)
-                scaled_val_set = train_dataset = torch.utils.data.ConcatDataset(scaled_val_sets)
+                scaled_val_set = torch.utils.data.ConcatDataset(scaled_val_sets)
         else:
             raise ValueError(f'Unknown eval dataset {args.val_dataset}')
 

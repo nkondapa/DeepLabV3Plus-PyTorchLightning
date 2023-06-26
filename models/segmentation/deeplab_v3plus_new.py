@@ -32,26 +32,7 @@ class DeeplabV3Plus(SegmentationModel):
         self.max_steps = kwargs['max_steps']
         self.step_size = kwargs['step_size']
 
-        # Validation scales
-        self.val_dataset = kwargs['val_dataset']
-        self.val_scales = kwargs['val_scales']
-
         super().__init__(**kwargs, normalize_images=False)
-
-        # for dataset_name in self.val_dataset:
-        #     for dataset_scale in self.val_scales:
-        #         if (dataset_scale is None) or (dataset_scale == 1):
-        #             dataset_scale = ""
-        #         else:
-        #             dataset_scale = f"_{dataset_scale:.2f}"
-        #         phase = f"val_{dataset_name}" + dataset_scale
-        #         self.step_outputs[phase] = {
-        #             "tp": [],
-        #             "fp": [],
-        #             "fn": [],
-        #             "tn": []
-        #         }
-        #         self.visualize_flag[phase] = False
 
     def initialize_model(self):
         if self.backbone == 'resnet101':
@@ -86,17 +67,6 @@ class DeeplabV3Plus(SegmentationModel):
         else:
             raise ValueError(f"lr_policy '{self.lr_policy}' not supported")
         return [optimizer], [{"scheduler": scheduler, "interval": "step"}]
-
-    # def validation_step(self, batch, batch_idx, dataloader_idx=0):
-    #     images, masks = batch
-    #     dataset_idx, scale_idx = dataloader_idx // len(self.val_scales), dataloader_idx % len(self.val_scales)
-    #     dataset_name = self.val_dataset[dataset_idx]
-    #     dataset_scale = self.val_scales[scale_idx]
-    #     if dataset_scale is None:
-    #         dataset_scale = ""
-    #     else:
-    #         dataset_scale = f"_{dataset_scale:.2f}"
-    #     self._step(images, masks, f"val_{dataset_name}" + dataset_scale)
 
 
 if __name__ == '__main__':
