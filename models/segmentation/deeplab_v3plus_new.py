@@ -33,7 +33,7 @@ class DeeplabV3Plus(SegmentationModel):
         self.step_size = kwargs['step_size']
 
         # Validation scales
-        self.val_scales = kwargs['val_dataset']
+        self.val_dataset = kwargs['val_dataset']
         self.val_scales = kwargs['val_scales']
 
         super().__init__(**kwargs, normalize_images=False)
@@ -81,7 +81,7 @@ class DeeplabV3Plus(SegmentationModel):
             dataset_scale = ""
         else:
             dataset_scale = f"_{dataset_scale:.2f}"
-        self._step(images, masks, f"val_{dataset_idx}" + dataset_scale)
+        self._step(images, masks, f"val_{dataset_name}" + dataset_scale)
 
 
 if __name__ == '__main__':
