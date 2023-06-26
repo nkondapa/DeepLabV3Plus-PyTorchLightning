@@ -74,13 +74,14 @@ class DeeplabV3Plus(SegmentationModel):
 
     def validation_step(self, batch, batch_idx, dataloader_idx=0):
         images, masks = batch
-        dataset_name = self.val_dataset[dataloader_idx // len(self.val_scales)]
-        dataset_scale = self.val_scales[dataloader_idx % len(self.val_scales)]
+        dataset_idx, scale_idx = dataloader_idx // len(self.val_scales), dataloader_idx % len(self.val_scales)
+        dataset_name = self.val_dataset[dataset_idx]
+        dataset_scale = self.val_scales[scale_idx]
         if dataset_scale is None:
             dataset_scale = ""
         else:
             dataset_scale = f"_{dataset_scale:.2f}"
-        self._step(images, masks, f"val_{dataset_name}" + dataset_scale)
+        self._step(images, masks, f"val_{dataset_idx}" + dataset_scale)
 
 
 if __name__ == '__main__':
