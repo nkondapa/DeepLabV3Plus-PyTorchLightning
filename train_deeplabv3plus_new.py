@@ -40,6 +40,13 @@ def collect_model_kwargs(args, train_loader):
     kwargs['max_steps'] = args.max_steps
     kwargs['step_size'] = args.step_size
 
+    # For _abstract class
+    if args.val_scales is None:
+        kwargs['num_val_dataloaders'] = len(args.val_dataset)
+    else:
+        kwargs['num_val_dataloaders'] = 2 * len(args.val_dataset)
+
+
     print('dataloader_length: ', kwargs['dataloader_length'])
     return kwargs
 
