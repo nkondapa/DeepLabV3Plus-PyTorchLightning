@@ -190,7 +190,7 @@ def main():
     include_classes_train, include_classes_val = prep_include_classes(args)
 
     train_transform = et.ExtCompose([
-        et.ExtRandomScale(scale_range=(0.5, 2)),
+        et.ExtRandomScale(scale_range=(0.75, 2)),
         et.ExtRandomCrop(size=(args.crop_size, args.crop_size)),
         et.ExtColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
         et.ExtRandomHorizontalFlip(),
