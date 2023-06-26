@@ -13,4 +13,4 @@ python train_deeplabv3plus_new.py \
 --crop_size 768 \
 --output_stride 16 \
 --data_root ./data/cityscapes \
---val_scales 0.75 1.00 1.25 \
+#--val_scales 0.75 1.00 1.25 \
