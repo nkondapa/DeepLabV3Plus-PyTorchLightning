@@ -7,7 +7,7 @@ python train_deeplabv3plus_new.py \
 --num_workers 16  \
 --val_every_n_epochs 3 \
 --wandb_group deeplabv3plus_cityscapes \
---exp_name deeplabv3plus_new_cityscapes_bs8_steps80k_lr1e-1 \
+--exp_name deeplabv3plus_new_cityscapes_bs8_steps80k_lr1e-1_rand_scale \
 --backbone resnet101 \
 --lr 0.1  \
 --crop_size 768 \
