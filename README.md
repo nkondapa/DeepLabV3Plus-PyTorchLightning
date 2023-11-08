@@ -28,3 +28,6 @@ the result for the Xception backbone.
 | Pascal VOC 2012 |     ResNet-101     |  78.57   |      78.85       |
 | Cityscapes |     ResNet-101     |   76.8   |      79.55*      |
 
+The WandB training log csv for Pascal VOC 2012 is [here](log%2Fdeeplabv3%2Bvoc%2Fwandb_export_2023-11-08T14%2018%2007.318-08%2000.csv).
+
+![W&B Chart 11_8_2023, 12 16 03 PM.png](log%2Fdeeplabv3%2Bvoc%2FW%26B%20Chart%2011_8_2023%2C%2012%2016%2003%20PM.png)) 
