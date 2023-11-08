@@ -156,12 +156,13 @@ def main():
     lr_callback = pl.callbacks.LearningRateMonitor(logging_interval='epoch')
     callbacks = [lr_callback] + checkpoint_callbacks
 
+    # TODO update entity to your wandb account
     logger = pl.loggers.WandbLogger(
         name=wandb_name,
         group=wandb_group,
         project="dlv3plus_port",
         log_model="all",
-        entity="vision-lab",
+        entity="dummy",
     )
 
     # watch model
