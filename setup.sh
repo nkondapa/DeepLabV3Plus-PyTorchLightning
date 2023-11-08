@@ -17,11 +17,10 @@ mv data/SegmentationClassAug data/VOCdevkit/VOC2012/SegmentationClass
 
 mv trainaug.txt data/VOCdevkit/VOC2012/ImageSets/Segmentation/
 
-pip install gdown
-gdown 1x8V3cPQdDKAXP2gxUG3g2APcUXzPG4aM -O data/cityscapes.tar.gz
-tar -xvf data/cityscapes.tar.gz -C data
-
 # For cityscapes
+#pip install gdown
+#gdown 1x8V3cPQdDKAXP2gxUG3g2APcUXzPG4aM -O data/cityscapes.tar.gz
+#tar -xvf data/cityscapes.tar.gz -C data
 #mkdir data/cityscapes
 #pip install appdirs
 #python misc/downloader.py -d ./data/cityscapes gtFine_trainvaltest.zip leftImg8bit_trainvaltest.zip

@@ -1,22 +1,10 @@
-numpy
-scipy
-torch
-torchvision
-lightning
-segmentation-models-pytorch
-matplotlib
-scipy
-wandb
-git+https://github.com/huggingface/diffusers.git
-transformers
-accelerate
-omegaconf
-einops
-kornia
--e git+https://github.com/openai/CLIP.git@main#egg=clip
--e git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers
-openai
-opencv-python
-invisible-watermark
-pandas
-scikit-image
+numpy==1.24.2
+pytorch-lightning==2.0.8
+segmentation-models-pytorch==0.3.3
+torch==2.0.0
+torchvision==0.15.1
+matplotlib==3.7.1
+wandb==0.15.10
+opencv-python==4.7.0.72
+pandas==2.0.0
+scikit-image==0.22.0
