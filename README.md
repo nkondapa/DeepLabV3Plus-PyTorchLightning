@@ -5,13 +5,16 @@ This repo ports YudeWang's excellent [repo](https://github.com/YudeWang/deeplabv
 We reproduce performance near the reported performance on Pascal VOC 2012 and Cityscapes.
 
 The major changes are: 
-1) Remove the usage of SyncBatchNorm, pytorch lightning handles this now
-2) Adding logging with the WandB logger
-3) Added support to run on a single GPU
+1) Remove the usage of SyncBatchNorm, pytorch lightning handles this now.
+2) Adding logging with the WandB logger.
+3) Added support to run on a single GPU.
 
 ### Usage
 Run setup.sh to build a virtual environment and install the required packages. By default, this will also 
 download the Pascal Dataset. If you'd like to download cityscapes uncomment the appropriate lines in setup.sh.
+
+Make sure to set the wandb logger details in train_deeplabv3plus_pascal.py or comment it out if you are
+not using WandB.
 
 Then execute the run_pascal.sh script with the desired number of gpus, batch size and epochs. 
 
