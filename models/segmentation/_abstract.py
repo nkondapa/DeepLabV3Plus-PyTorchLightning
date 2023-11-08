@@ -9,7 +9,7 @@ import lightning.pytorch as pl
 import segmentation_models_pytorch as smp
 
 from misc.visualizer import make_axes_invisible, SegmentationMapVisualizer
-import pdb
+
 
 class SegmentationModel(pl.LightningModule, ABC):
 

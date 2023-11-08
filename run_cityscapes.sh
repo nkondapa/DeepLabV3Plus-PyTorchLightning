@@ -1,4 +1,4 @@
-python train_deeplabv3plus_new.py \
+python train_deeplabv3plus_cityscapes.py \
 --train_dataset cityscapes \
 --val_dataset cityscapes \
 --max_steps 80000 \

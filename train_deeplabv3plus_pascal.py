@@ -12,13 +12,12 @@ from torch.utils.data import ConcatDataset
 # from datasets.segmentation.coco import CocoDatasetPascalClasses
 # from datasets.segmentation.synth_pascal import SyntheticPascalDataset
 from datasets.VOCDataset import VOCDataset
-from datasets.CityscapesDataset import CityscapesDataset
 from models.segmentation.unet import UNetResnet18
 from models.segmentation.deeplab_v3 import DeeplabV3Resnet50, DeeplabV3Resnet101
-from models.segmentation.deeplab_v3plus_cityscapes import DeeplabV3Plus
+from models.segmentation.deeplab_v3plus import DeeplabV3Plus
 import numpy as np
 import datetime
-from experiment.deeplabv3_cityscapes.config import cfg
+from experiment.deeplabv3_voc.config import cfg
 
 MODELS = {
     "UNetResnet18": UNetResnet18,
@@ -71,37 +70,21 @@ def main():
 
     # experiment parameters
     parser.add_argument("--model", type=str, default="DeeplabV3Plus")
-    parser.add_argument("--from_scratch", action='store_true', default=False)
     parser.add_argument("--max_epochs", type=int, default=80)
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--num_gpus", type=int, default=1)
     parser.add_argument("--val_batch_size", type=int, default=16)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--lr", type=float)
+    parser.add_argument("--lr", type=float, default=0.0007)
+    parser.add_argument("--train_power", type=float, default=0.9)
+    parser.add_argument("--train_momentum", type=float, default=0.9)
     parser.add_argument("--weight_decay", type=float)
     parser.add_argument("--checkpoint", type=str, default=None)
-    parser.add_argument("--use_synthetic", action='store_true', default=False)
-    parser.add_argument('--include_classes', type=str, nargs='+', default=["Horse"])
-    parser.add_argument('--include_classes_train', type=str, nargs='+')
-    parser.add_argument('--include_classes_val', type=str, nargs='+')
-    parser.add_argument('--use_gpt_synth', action='store_true', default=False)
-    parser.add_argument('--use_prob_mask', action='store_true', default=False)
     parser.add_argument('--eval_dataset', type=str, nargs='+', default=['pascal'])
-    parser.add_argument('--coco_random_subset', type=float, default=None)
-
-    # synthetic filter parameters
-    parser.add_argument("--synth_filter_method", type=str, default=None)
-    parser.add_argument("--topk", type=int, default=-1)
-    parser.add_argument("--topk_ratio", type=float, default=1)
-    parser.add_argument("--threshold", type=float, default=None)
-    parser.add_argument("--max_samples", type=int, default=None)
-    parser.add_argument("--samples_per_class", type=int, default=None)
-    parser.add_argument("--synthetic_data_folder", type=str, default='./data/results/')
 
     args = parser.parse_args()
 
     model_name = args.model
-    pretrained = not args.from_scratch
     max_epochs = args.max_epochs
     batch_size = args.batch_size
     val_batch_size = args.val_batch_size
@@ -111,7 +94,6 @@ def main():
     wandb_group = args.wandb_group
     wandb_name = args.exp_name
     checkpoint = args.checkpoint
-    use_synthetic = args.use_synthetic
     save_topk = 1
     save_last = True
     limit_train_batches = None
@@ -136,35 +118,14 @@ def main():
 
     pl.seed_everything(args.seed)
 
-    # TODO: do selection with multiple classes
-    return_prob = False
-    if args.use_prob_mask:
-        return_prob = True
-
-    include_classes_train, include_classes_val = prep_include_classes(args)
-
-    cityscapes_train_dataset = CityscapesDataset('cityscapes', cfg, 'train', aug=True)
-    cityscapes_val_dataset = CityscapesDataset('cityscapes', cfg, 'val', aug=True)
-    cityscapes_train_extra_dataset = CityscapesDataset('cityscapes', cfg, 'train_extra', aug=True)
-
-    train_dataset = torch.utils.data.ConcatDataset([cityscapes_train_dataset,
-                                                    cityscapes_val_dataset,
-                                                    cityscapes_train_extra_dataset])
+    voc_train_dataset = VOCDataset('VOC2012', cfg, 'train', cfg.DATA_AUG)
+    train_dataset = voc_train_dataset
 
     val_loaders = []
     for v_dset in args.eval_dataset:
 
-        # TODO is return prob needed for val?
-        if v_dset == 'cityscapes':
-            val_dataset = CityscapesDataset('cityscapes', cfg, 'test', aug=False)
-        # elif v_dset == 'coco':
-        #     val_dataset = CocoDatasetPascalClasses(split="val", resize_mode="center-crop", include_classes=include_classes_val, return_dummy_prob=return_prob)
-        #     if args.coco_random_subset is not None:
-        #         num_samples = int(args.coco_random_subset * len(val_dataset))
-        #         indices = np.arange(len(val_dataset))
-        #         np.random.shuffle(indices)
-        #         indices = indices[:num_samples]
-        #         val_dataset = torch.utils.data.Subset(val_dataset, indices)
+        if v_dset == 'pascal':
+            val_dataset = VOCDataset('VOC2012', cfg, 'val', False)
         else:
             raise ValueError(f'Unknown eval dataset {args.eval_dataset}')
 
@@ -172,12 +133,13 @@ def main():
                                 drop_last=True)
         val_loaders.append(val_loader)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, drop_last=True)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers,
+                              drop_last=True)
 
     model_kwargs = collect_model_kwargs(args, train_loader)
-    model = MODELS[model_name](class_names=cityscapes_train_dataset.classes,
-                               ignore_index=cityscapes_train_dataset.ignore_index,
-                               visualizer_kwargs=cityscapes_train_dataset.visualizer_kwargs,
+    model = MODELS[model_name](class_names=voc_train_dataset.classes,
+                               ignore_index=voc_train_dataset.ignore_index,
+                               visualizer_kwargs=voc_train_dataset.visualizer_kwargs,
                                **model_kwargs
                                )
 
@@ -236,15 +198,6 @@ def main():
     )
 
 
-if __name__ == "__main__":
-    import sys
 
-    # filter_ops = ["mean_filter", "keep_only_target_classes"]
-    # args = [
-    #     "--eval_dataset", "cityscapes", "--max_epochs", "1", "--batch_size", "1",
-    #     "--num_gpus", "1", "--num_workers", "0", "--val_every_n_epochs", "1",
-    #     "--wandb_group", "deeplabv3plus_cityscapes", "--exp_name",
-    #     "deeplabv3plus_cityscapes_bs16_epoch100", "--debug"
-    # ]
-    # sys.argv.extend(args)
+if __name__ == "__main__":
     main()
