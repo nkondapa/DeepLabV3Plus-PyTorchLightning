@@ -2,7 +2,7 @@
 
 ### Introduction
 This repo ports YudeWang's excellent [repo](https://github.com/YudeWang/deeplabv3plus-pytorch) for deeplabv3plus in Pytorch to Pytorch-Lightning. 
-We reproduce performance near the reported performance on Pascal VOC 2012 and Cityscapes.
+We reproduce performance near the reported performance in the original paper on Pascal VOC 2012 and Cityscapes.
 
 The major changes are: 
 1) Remove the usage of SyncBatchNorm, pytorch lightning handles this now.
