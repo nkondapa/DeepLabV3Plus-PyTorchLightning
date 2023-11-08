@@ -3,19 +3,14 @@ import os
 import matplotlib.pyplot as plt
 
 import torch
-import lightning.pytorch as pl
-from lightning.pytorch.plugins import TorchSyncBatchNorm
+import pytorch_lightning as pl
 from torch.utils.data import DataLoader
 from torch.utils.data import ConcatDataset
 
-# from datasets.segmentation.pascal import PascalDataset
-# from datasets.segmentation.coco import CocoDatasetPascalClasses
-# from datasets.segmentation.synth_pascal import SyntheticPascalDataset
 from datasets.VOCDataset import VOCDataset
 from models.segmentation.unet import UNetResnet18
 from models.segmentation.deeplab_v3 import DeeplabV3Resnet50, DeeplabV3Resnet101
 from models.segmentation.deeplab_v3plus import DeeplabV3Plus
-import numpy as np
 import datetime
 from experiment.deeplabv3_voc.config import cfg
 
@@ -162,9 +157,9 @@ def main():
     callbacks = [lr_callback] + checkpoint_callbacks
 
     logger = pl.loggers.WandbLogger(
-        name=wandb_name or "segmentation_test, model={}".format(model_name),
-        group=wandb_group or "markusShit",
-        project="neuripsV2",
+        name=wandb_name,
+        group=wandb_group,
+        project="dlv3plus_port",
         log_model="all",
         entity="vision-lab",
     )

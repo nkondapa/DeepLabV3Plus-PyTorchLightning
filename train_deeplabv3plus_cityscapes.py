@@ -1,16 +1,14 @@
 import argparse
 import os
-import matplotlib.pyplot as plt
 
 import torch
-import lightning.pytorch as pl
+import pytorch_lightning as pl
 from torch.utils.data import DataLoader
 
 from datasets.Cityscapes import Cityscapes
-from models.segmentation.deeplab_v3plus_new import DeeplabV3Plus
+from models.segmentation.deeplab_v3plus_mmseg_port import DeeplabV3Plus
 import numpy as np
 import datetime
-from experiment.deeplabv3_cityscapes.config import cfg
 
 # Imports from main
 from utils import ext_transforms as et
@@ -221,9 +219,9 @@ def main():
     callbacks = [lr_callback] + checkpoint_callbacks
 
     logger = pl.loggers.WandbLogger(
-        name=wandb_name or "segmentation_test, model={}".format(model_name),
-        group=wandb_group or "markusShit",
-        project="neuripsV2",
+        name=wandb_name,
+        group=wandb_group,
+        project="dlv3plus_port",
         log_model="all",
         entity="vision-lab",
     )

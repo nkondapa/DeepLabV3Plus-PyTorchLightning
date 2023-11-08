@@ -5,7 +5,7 @@ import math
 import matplotlib.pyplot as plt
 import torch
 import torchvision.transforms as T
-import lightning.pytorch as pl
+import pytorch_lightning as pl
 import segmentation_models_pytorch as smp
 
 from misc.visualizer import make_axes_invisible, SegmentationMapVisualizer

@@ -1,7 +1,7 @@
 import torch
 import segmentation_models_pytorch as smp
 from models.segmentation import custom_focal_loss
-from net.deeplabv3plus_new import deeplabv3plus_resnet101
+from net.deeplabv3plus_mmseg_port import deeplabv3plus_resnet101
 from net._deeplab import convert_to_separable_conv
 import utils
 from experiment.deeplabv3_cityscapes.config import cfg

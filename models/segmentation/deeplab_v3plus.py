@@ -1,6 +1,4 @@
 import torch
-import segmentation_models_pytorch as smp
-from models.segmentation import custom_focal_loss
 from net.deeplabv3plus import deeplabv3plus as dlv3p
 from experiment.deeplabv3_voc.config import cfg
 
@@ -14,7 +12,6 @@ class DeeplabV3Plus(SegmentationModel):
     def __init__(self, max_epochs, dataloader_length, **kwargs):
         self.max_epochs = max_epochs
         self.dataloader_length = dataloader_length
-        # self.loss_mode = kwargs.get("loss_mode", "multiclass")
 
         super().__init__(**kwargs, normalize_images=False)
 
@@ -23,7 +20,6 @@ class DeeplabV3Plus(SegmentationModel):
         return model
 
     def initialize_loss(self):
-        # loss = smp.losses.FocalLoss(mode=self.loss_mode, ignore_index=self.ignore_index)
         loss = torch.nn.CrossEntropyLoss(ignore_index=255)
         return loss
 
